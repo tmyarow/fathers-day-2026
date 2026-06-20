@@ -42,7 +42,15 @@
     background:transparent;color:var(--accent-dark);border:1.5px solid var(--accent);
     padding:13px 26px;border-radius:30px;cursor:pointer;transition:.15s}
   .saveall:hover{background:var(--accent);color:#fff}
+  .saveall:disabled{opacity:.62;cursor:wait;background:transparent;color:var(--accent-dark)}
   .savehint{text-align:center;color:var(--soft);font-size:.82rem;font-style:italic;margin-top:10px}
+  .downloads{display:none;margin:16px auto 0;gap:10px;justify-content:center;flex-wrap:wrap}
+  .downloads.show{display:flex}
+  .downloads a{
+    color:var(--accent-dark);border:1px solid var(--line);background:var(--card);
+    text-decoration:none;border-radius:999px;padding:8px 14px;font-size:.84rem;
+  }
+  .downloads a:hover{border-color:var(--accent)}
 
   .messages{margin-top:50px;display:flex;flex-direction:column;gap:24px}
   .letter{
@@ -78,8 +86,13 @@
         <figcaption><span class="cap">with all our love</span></figcaption>
       </figure>
     </div>
-    <button class="saveall" onclick="downloadAll()">Download</button>
-    <p class="savehint">Saves all three photos in full resolution</p>
+    <button class="saveall" id="savePhotos" type="button" disabled>Preparing photos...</button>
+    <p class="savehint" id="saveHint" aria-live="polite">Getting the full-resolution photos ready</p>
+    <div class="downloads" id="photoDownloads" aria-label="Full resolution photo links">
+      <a href="pics/118cdf27-081b-4ea2-bbb1-a5bb56306da1.jpg" target="_blank" rel="noopener">Photo 1</a>
+      <a href="pics/6a86c72c-e259-4f7d-a921-65e71fbdadff.jpg" target="_blank" rel="noopener">Photo 2</a>
+      <a href="pics/c65ca164-fc67-4efc-a725-c643914682e6.jpg" target="_blank" rel="noopener">Photo 3</a>
+    </div>
 
     <div class="messages">
       <article class="letter">
@@ -98,31 +111,82 @@
   </div>
 
 <script>
-  async function downloadAll(){
-    const files=[
-      ['pics/118cdf27-081b-4ea2-bbb1-a5bb56306da1.jpg','fathers-day-1.jpg'],
-      ['pics/6a86c72c-e259-4f7d-a921-65e71fbdadff.jpg','fathers-day-2.jpg'],
-      ['pics/c65ca164-fc67-4efc-a725-c643914682e6.jpg','fathers-day-3.jpg']
-    ];
-    // Fetch each file as a blob, then trigger a download from that blob.
-    // Staggering with a gap stops the browser from coalescing the three
-    // requests into a single download (the cause of "only one saved").
-    for(let i=0;i<files.length;i++){
-      const [src,name]=files[i];
-      try{
-        const blob=await (await fetch(src)).blob();
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');
-        a.href=url; a.download=name;
-        document.body.appendChild(a); a.click(); a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url),4000);
-      }catch(e){
-        const a=document.createElement('a');
-        a.href=src; a.download=name;
-        document.body.appendChild(a); a.click(); a.remove();
-      }
-      await new Promise(r=>setTimeout(r,700));
+  const photos=[
+    {src:'pics/118cdf27-081b-4ea2-bbb1-a5bb56306da1.jpg',name:'fathers-day-1.jpg'},
+    {src:'pics/6a86c72c-e259-4f7d-a921-65e71fbdadff.jpg',name:'fathers-day-2.jpg'},
+    {src:'pics/c65ca164-fc67-4efc-a725-c643914682e6.jpg',name:'fathers-day-3.jpg'}
+  ];
+
+  const saveButton=document.getElementById('savePhotos');
+  const saveHint=document.getElementById('saveHint');
+  const photoDownloads=document.getElementById('photoDownloads');
+  let shareFiles=[];
+  let preparing;
+
+  function canSharePhotoFiles(files){
+    return typeof navigator.share==='function' &&
+      (typeof navigator.canShare!=='function' || navigator.canShare({files}));
+  }
+
+  function showFallback(){
+    saveButton.hidden=true;
+    saveHint.textContent='Open each full-resolution photo and save it from the browser share menu';
+    photoDownloads.classList.add('show');
+  }
+
+  async function prepareShareFiles(){
+    const files=[];
+    for(const photo of photos){
+      const response=await fetch(photo.src);
+      if(!response.ok) throw new Error(`Could not load ${photo.src}`);
+      const blob=await response.blob();
+      files.push(new File([blob],photo.name,{type:blob.type || 'image/jpeg'}));
     }
+    if(!canSharePhotoFiles(files)) throw new Error('File sharing is not supported here');
+    return files;
+  }
+
+  async function startPreparing(){
+    if(typeof File==='undefined' || typeof fetch!=='function' || typeof navigator.share!=='function'){
+      showFallback();
+      return;
+    }
+
+    saveButton.disabled=true;
+    saveButton.textContent='Preparing photos...';
+    preparing=prepareShareFiles();
+
+    try{
+      shareFiles=await preparing;
+      saveButton.disabled=false;
+      saveButton.textContent='Save photos';
+      saveHint.textContent='On iPhone, choose Save Images in the share sheet';
+    }catch(error){
+      showFallback();
+    }
+  }
+
+  async function sharePhotos(){
+    if(!shareFiles.length && preparing) shareFiles=await preparing;
+    if(!canSharePhotoFiles(shareFiles)){
+      showFallback();
+      return;
+    }
+
+    try{
+      saveHint.textContent='Choose Save Images in the share sheet to add them to Photos';
+      await navigator.share({files:shareFiles});
+    }catch(error){
+      if(error && error.name==='AbortError') return;
+      showFallback();
+    }
+  }
+
+  saveButton.addEventListener('click',sharePhotos);
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',startPreparing);
+  }else{
+    startPreparing();
   }
 </script>
 </body>
