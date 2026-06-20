@@ -1,0 +1,5 @@
+.DS_Store
+*.log
+mockups/
+mockups.html
+deploy.sh

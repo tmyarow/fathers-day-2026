@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FBF4EA">
+<title>Happy Father's Day, Dad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lora:ital,wght@0,400;0,500;1,400&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FBF4EA; --card:#FFFDF9; --ink:#473429; --soft:#7d6655;
+    --accent:#C26B4A; --accent-dark:#A7553A; --line:#EADBC8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'Lora',Georgia,serif; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    padding:0 0 60px;
+  }
+  .wrap{max-width:620px;margin:0 auto;padding:0 22px}
+  header{text-align:center;padding:54px 22px 34px}
+  .eyebrow{font-family:'Caveat',cursive;font-size:1.7rem;color:var(--accent);transform:rotate(-2deg);display:inline-block}
+  h1{font-family:'Playfair Display',serif;font-weight:700;font-size:clamp(2.2rem,8vw,3.1rem);line-height:1.1;margin:.2em 0 .25em}
+  .sub{color:var(--soft);font-style:italic;font-size:1.05rem}
+  .divider{width:54px;height:3px;background:var(--accent);border-radius:3px;margin:26px auto 0;opacity:.7}
+
+  .gallery{display:flex;flex-direction:column;gap:30px;margin-top:34px}
+  figure{
+    background:var(--card);padding:14px 14px 18px;border-radius:14px;
+    box-shadow:0 14px 30px rgba(71,52,41,.12);border:1px solid var(--line);
+  }
+  figure:nth-child(odd){transform:rotate(-.8deg)}
+  figure:nth-child(even){transform:rotate(.8deg)}
+  figure img{width:100%;display:block;border-radius:8px;background:#eee}
+  figcaption{display:flex;justify-content:center;align-items:center;margin-top:14px}
+  .cap{font-family:'Caveat',cursive;font-size:1.5rem;color:var(--soft);text-align:center}
+
+  .saveall{display:block;margin:34px auto 0;font-family:'Playfair Display',serif;font-size:1rem;
+    background:transparent;color:var(--accent-dark);border:1.5px solid var(--accent);
+    padding:13px 26px;border-radius:30px;cursor:pointer;transition:.15s}
+  .saveall:hover{background:var(--accent);color:#fff}
+  .savehint{text-align:center;color:var(--soft);font-size:.82rem;font-style:italic;margin-top:10px}
+
+  .messages{margin-top:50px;display:flex;flex-direction:column;gap:24px}
+  .letter{
+    background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:26px 26px 22px;box-shadow:0 8px 22px rgba(71,52,41,.07);position:relative;
+  }
+  .letter h2{font-family:'Playfair Display',serif;font-weight:600;font-size:1.25rem;color:var(--accent-dark);margin-bottom:10px}
+  .letter p{font-size:1.05rem}
+  .sig{font-family:'Caveat',cursive;font-size:1.7rem;color:var(--ink);margin-top:14px;display:block}
+  footer{text-align:center;margin-top:48px;color:var(--soft);font-style:italic;font-size:.95rem}
+</style>
+</head>
+<body>
+  <header>
+    <span class="eyebrow">to the best dad</span>
+    <h1>Happy Father's&nbsp;Day</h1>
+    <p class="sub">A little gift from both of us — we had these taken just for you · June 21, 2026</p>
+    <div class="divider"></div>
+  </header>
+
+  <div class="wrap">
+    <div class="gallery">
+      <figure>
+        <img src="pics/preview/p1.jpg" alt="Tyler and his brother, studio portrait" loading="lazy">
+        <figcaption><span class="cap">for you, Dad</span></figcaption>
+      </figure>
+      <figure>
+        <img src="pics/preview/p2.jpg" alt="Tyler and his brother, studio portrait" loading="lazy">
+        <figcaption><span class="cap">your two boys</span></figcaption>
+      </figure>
+      <figure>
+        <img src="pics/preview/p3.jpg" alt="Tyler and his brother, studio portrait" loading="lazy">
+        <figcaption><span class="cap">with all our love</span></figcaption>
+      </figure>
+    </div>
+    <button class="saveall" onclick="downloadAll()">Download</button>
+    <p class="savehint">Saves all three photos in full resolution</p>
+
+    <div class="messages">
+      <article class="letter">
+        <h2>From Tyler</h2>
+        <p>Dad — thank you for every lesson, every laugh, and every time you showed up without being asked. The older I get, the more I see how much of the good in me came from you.</p>
+        <span class="sig">— Tyler</span>
+      </article>
+      <article class="letter">
+        <h2>From your brother</h2>
+        <p>Pops — you made the hard stuff look easy and always had our backs. Hope today is as great as you are. We love you.</p>
+        <span class="sig">— [Brother]</span>
+      </article>
+    </div>
+
+    <footer>With love, on Father's Day 2026 🤍</footer>
+  </div>
+
+<script>
+  async function downloadAll(){
+    const files=[
+      ['pics/118cdf27-081b-4ea2-bbb1-a5bb56306da1.jpg','fathers-day-1.jpg'],
+      ['pics/6a86c72c-e259-4f7d-a921-65e71fbdadff.jpg','fathers-day-2.jpg'],
+      ['pics/c65ca164-fc67-4efc-a725-c643914682e6.jpg','fathers-day-3.jpg']
+    ];
+    // Fetch each file as a blob, then trigger a download from that blob.
+    // Staggering with a gap stops the browser from coalescing the three
+    // requests into a single download (the cause of "only one saved").
+    for(let i=0;i<files.length;i++){
+      const [src,name]=files[i];
+      try{
+        const blob=await (await fetch(src)).blob();
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url; a.download=name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url),4000);
+      }catch(e){
+        const a=document.createElement('a');
+        a.href=src; a.download=name;
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+      await new Promise(r=>setTimeout(r,700));
+    }
+  }
+</script>
+</body>
+</html>
